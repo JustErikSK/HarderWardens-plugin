@@ -1,6 +1,7 @@
 name: HarderWardens
-version: 1.1.4
+version: 1.1.5
 main: me.minecraft.plugin.harderWardens.HarderWardens
 api-version: 1.21
 authors: [ JustErikSK ]
 description: Wardens have much more health and deal more damage but they also give good rewards for defeating them, all of this based on the warden's difficulty set in the config file!
+folia-supported: true
