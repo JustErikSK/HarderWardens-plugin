@@ -37,5 +37,5 @@ warden_difficulty: NORMAL
 #     - Sharpness 4 Book
 #     - Void Fragment (custom loot drop, doesn't have any uses yet)
 
-# Version 1.1.5 works for MC versions 1.21 - 1.21.8
+# Version 1.1.6 works for MC versions 1.21 - 1.21.9
 # End of config file
