@@ -1,41 +1,41 @@
-# Configuration file for HarderWardens plugin
+# Configuration file for Harder Wardens plugin
 # You can set Warden's difficulty level here
 
 # WARDEN'S DIFFICULTY LEVEL
-# This will apply to all Wardens (except the warden's name)
-# (Default = NORMAL; More difficulty details below)
+# This will apply to all Wardens
+# (Default = NORMAL; Options = CUSTOM, EASY, NORMAL, HARD, NIGHTMARE, INSANE)
 warden_difficulty: NORMAL
 
-# Difficulties: EASY, NORMAL, HARD (more difficulties are planned for future updates!)
+# Settings for custom difficulty - CUSTOM has to be set as the warden's difficulty
+# (Health: Default = 100; Min = 1; Max = 10000)
+# (Damage: Default = 1.0; Min = 0.1; Max = 100.0)
+# (Loot: Default = 1 and 2; Options = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10; Details for each loot tier below)
+warden_health: 100
+warden_damage: 1.0
+warden_loot_option_1: 1
+warden_loot_option_2: 2
+
+# Details for each difficulty:
 
 # Difficulty EASY details:
-#   Warden's Health: 250 hp (125 hearts)
+#   Warden's Health: 100 hp (50 hearts)
 #   Warden's Damage: 0.5x multiplier
-#   Warden's Lootables:
-#     - 12 Iron Ingots
-#     - 12 Gold Ingots
-#     - Swift Sneak 1 Book
-#     - Unbreaking 1 Book
-#     - Warden's Fragment (custom loot drop, doesn't have any uses yet)
 
 # Difficulty NORMAL details:
-#   Warden's Health: 500 hp (250 hearts)
-#   Warden's Damage: 2.2x multiplier
-#   Warden's Lootables:
-#     - 2 Netherite Scraps
-#     - 5 Diamonds
-#     - Swift Sneak 2 Book
-#     - Protection 2 Book
-#     - Dark Essence (custom loot drop, doesn't have any uses yet)
+#   Warden's Health: 250 hp (125 hearts)
+#   Warden's Damage: 1.5x multiplier
 
 # Difficulty HARD details:
-#   Warden's Health: 1000 hp (500 hearts)
-#   Warden's Damage: 3.5x multiplier
-#   Warden's Lootables:
-#     - Enchanted Diamond Chestplate (Protection 4, Unbreaking 3)
-#     - Swift Sneak 3 Book
-#     - Sharpness 4 Book
-#     - Void Fragment (custom loot drop, doesn't have any uses yet)
+#   Warden's Health: 500 hp (250 hearts)
+#   Warden's Damage: 2.5x multiplier
 
-# Version 1.1.6 works for MC versions 1.21 - 1.21.9
+# Difficulty NIGHTMARE details:
+#   Warden's Health: 900 hp (450 hearts)
+#   Warden's Damage: 3.5x multiplier
+
+# Difficulty INSANE details:
+#   Warden's Health: 1200 hp (600 hearts)
+#   Warden's Damage: 4.5x multiplier
+
+# Version 1.2 works for MC versions 1.21 - 1.21.9
 # End of config file

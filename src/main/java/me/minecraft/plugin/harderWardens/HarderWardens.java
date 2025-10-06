@@ -40,37 +40,49 @@ public final class HarderWardens extends JavaPlugin implements Listener {
         String warden_difficulty = this.getConfig().getString("warden_difficulty", "NORMAL");
         if (e.getEntity() instanceof LivingEntity ent) {
             if (ent.getType() == EntityType.WARDEN) {
-                if (warden_difficulty.equals("EASY")) { // 250HP (125 hearts) on easy difficulty
-                    ent.setCustomName("Echo Lurker"); // Warden's name on easy difficulty is
+                if (warden_difficulty.equals("EASY")) { // 100HP (50 hearts) on easy difficulty
+                    ent.setCustomName("Echo Lurker"); // Warden's name on easy difficulty is Echo Lurker
+                    ent.setCustomNameVisible(false);
+                    ent.setPersistent(ent.isCustomNameVisible());
+                    ent.setMaxHealth(100);
+                    ent.setHealth(100);
+                } else if (warden_difficulty.equals("NORMAL")) { // 250HP (125 hearts) on normal difficulty
+                    ent.setCustomName("Abyss Killer"); // Warden's name on normal difficulty is Abyss Killer
                     ent.setCustomNameVisible(false);
                     ent.setPersistent(ent.isCustomNameVisible());
                     ent.setMaxHealth(250);
                     ent.setHealth(250);
-                } else if (warden_difficulty.equals("NORMAL")) { // 500HP (250 hearts) on normal difficulty
-                    ent.setCustomName("Abyss Killer"); // Warden's name on normal difficulty is
+                } else if (warden_difficulty.equals("HARD")) { // 500HP (250 hearts) on hard difficulty
+                    ent.setCustomName("Void Reaper"); // Warden's name on hard difficulty is Void Reaper
                     ent.setCustomNameVisible(false);
                     ent.setPersistent(ent.isCustomNameVisible());
                     ent.setMaxHealth(500);
                     ent.setHealth(500);
-                } else if (warden_difficulty.equals("HARD")) { // 1000HP (500 hearts) on hard difficulty
-                    ent.setCustomName("Void Reaper"); // Warden's name on hard difficulty is
+                } else if (warden_difficulty.equals("NIGHTMARE")) { // 900HP (450 hearts) on nightmare difficulty
+                    ent.setCustomName("Nightmare Sentinel"); // Warden's name on hard difficulty is Nightmare Sentinel
                     ent.setCustomNameVisible(false);
                     ent.setPersistent(ent.isCustomNameVisible());
-                    ent.setMaxHealth(1000);
-                    ent.setHealth(1000);
+                    ent.setMaxHealth(900);
+                    ent.setHealth(900);
+                } else if (warden_difficulty.equals("INSANE")) { // 1200HP (600 hearts) on insane difficulty
+                    ent.setCustomName("Abyssal Devourer"); // Warden's name on hard difficulty is Abyssal Devourer
+                    ent.setCustomNameVisible(false);
+                    ent.setPersistent(ent.isCustomNameVisible());
+                    ent.setMaxHealth(1200);
+                    ent.setHealth(1200);
                 } else { // if difficulty not set correctly, default difficulty (normal) will be used
                     ent.setCustomName("Abyss Killer");
                     ent.setCustomNameVisible(false);
                     ent.setPersistent(ent.isCustomNameVisible());
-                    ent.setMaxHealth(500);
-                    ent.setHealth(500);
+                    ent.setMaxHealth(250);
+                    ent.setHealth(250);
                 }
             }
         }
     }
     @EventHandler
     public void wardenDeathEvent(EntityDeathEvent e) {
-
+/*
         LivingEntity ent = e.getEntity();
         Random ran = new Random();
         int num = ran.nextInt(100);
@@ -187,7 +199,7 @@ public final class HarderWardens extends JavaPlugin implements Listener {
                 e.getDrops().add(fragment); // Custom item for normal difficulty wardens - Dark Essence
 
             }
-        }
+        }*/
     }
     @EventHandler
     public void wardenAttackEvent(EntityDamageByEntityEvent e) {
@@ -197,17 +209,25 @@ public final class HarderWardens extends JavaPlugin implements Listener {
                 double originalDamage = e.getDamage();
                 double newDamage = originalDamage * 0.5;
                 e.setDamage(newDamage);
-            } else if (warden_difficulty.equals("NORMAL")) { // 2.2x damage on normal difficulty
+            } else if (warden_difficulty.equals("NORMAL")) { // 1.5x damage on normal difficulty
                 double originalDamage = e.getDamage();
-                double newDamage = originalDamage * 2.2;
+                double newDamage = originalDamage * 1.5;
                 e.setDamage(newDamage);
-            } else if (warden_difficulty.equals("HARD")) { // 3.5x damage on hard difficulty
+            } else if (warden_difficulty.equals("HARD")) { // 2.5x damage on hard difficulty
+                double originalDamage = e.getDamage();
+                double newDamage = originalDamage * 2.5;
+                e.setDamage(newDamage);
+            } else if (warden_difficulty.equals("NIGHTMARE")) { // 3.5x damage on nightmare difficulty
                 double originalDamage = e.getDamage();
                 double newDamage = originalDamage * 3.5;
                 e.setDamage(newDamage);
+            } else if (warden_difficulty.equals("INSANE")) { // 4.5x damage on insane difficulty
+                double originalDamage = e.getDamage();
+                double newDamage = originalDamage * 4.5;
+                e.setDamage(newDamage);
             } else { // if difficulty not set correctly, default difficulty (normal) will be used
                 double originalDamage = e.getDamage();
-                double newDamage = originalDamage * 2.2;
+                double newDamage = originalDamage * 1.5;
                 e.setDamage(newDamage);
             }
         }
