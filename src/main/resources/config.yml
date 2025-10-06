@@ -20,22 +20,42 @@ warden_loot_option_2: 2
 # Difficulty EASY details:
 #   Warden's Health: 100 hp (50 hearts)
 #   Warden's Damage: 0.5x multiplier
+#   Loot options: 1 and 2
 
 # Difficulty NORMAL details:
 #   Warden's Health: 250 hp (125 hearts)
 #   Warden's Damage: 1.5x multiplier
+#   Loot options: 3 and 4
 
 # Difficulty HARD details:
 #   Warden's Health: 500 hp (250 hearts)
 #   Warden's Damage: 2.5x multiplier
+#   Loot options: 5 and 6
 
 # Difficulty NIGHTMARE details:
 #   Warden's Health: 900 hp (450 hearts)
 #   Warden's Damage: 3.5x multiplier
+#   Loot options: 7 and 8
 
 # Difficulty INSANE details:
 #   Warden's Health: 1200 hp (600 hearts)
 #   Warden's Damage: 4.5x multiplier
+#   Loot options: 9 and 10
+
+# Details for each loot option:
+# These loot options might get changed in the future, if you have any ideas on what to add or remove from them, please give us a feedback, thank you!
+
+# Loot 0: This one disables loot
+# Loot 1: 3x Iron Ingots, 4x Amethyst Shards, 5x Lapis Lazuli
+# Loot 2: 1x Diamond, 1x Golden Apple, 1x Enchanted Book with either Unbreaking 1 or Protection 1
+# Loot 3: 4x Gold Ingots, 6x Redstones, 2x Emeralds
+# Loot 4: 1x Netherite Scrap, 2x Ender Pearls, 1x Enchanted Book with either Efficiency 2 or Sharpness 2
+# Loot 5: 5x Nether Quartz, 2x Blaze Rods, 2x Diamonds
+# Loot 6: 1x Totem of Undying, 1x Enchanted Tool (pickaxe, sword or axe with lvl2-3 enchants), 1x Enchanted Book with either Looting 2 or Protection 3 or Efficiency 3
+# Loot 7: 3x Diamonds, 3x Ender Pearls, 2x Blaze Powders
+# Loot 8: 2x Netherite Scraps, 1x Enchanted Armor Piece (boots, leggings, chestplate or helmet with lvl3-4 enchants), 1x Enchanted Golden Apple
+# Loot 9: 3x Netherite Scraps, 1x End Crystal, 2x Ghast Tears
+# Loot 10: 1x Netherite Ingot, 1x Totem of Undying, 1x Enchanted Netherite Weapon (sword or axe with lvl4-5 enchants)
 
 # Version 1.2 works for MC versions 1.21 - 1.21.9
 # End of config file

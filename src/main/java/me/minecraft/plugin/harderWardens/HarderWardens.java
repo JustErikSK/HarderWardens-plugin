@@ -32,6 +32,10 @@ public final class HarderWardens extends JavaPlugin implements Listener {
 
         FileConfiguration config = this.getConfig();
         config.addDefault("warden_difficulty", "NORMAL");
+        config.addDefault("warden_health", 100);
+        config.addDefault("warden_damage", 1.0);
+        config.addDefault("warden_loot_option_1", 1);
+        config.addDefault("warden_loot_option_2", 2);
     }
 
     @EventHandler
