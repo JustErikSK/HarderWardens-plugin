@@ -19,16 +19,22 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public final class HarderWardens extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GREEN + "HarderWardens >> Plugin has been enabled!");
+        Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GREEN + "Harder Wardens >> Plugin has been enabled!");
         this.getServer().getPluginManager().registerEvents(this, this);
         this.saveDefaultConfig();
+
+        getLogger().info("Harder Wardens is loading loot tables...");
+        WardenLootManager.init();
+        getLogger().info("Loot tables initialized!");
 
         FileConfiguration config = this.getConfig();
         config.addDefault("warden_difficulty", "NORMAL");
@@ -36,6 +42,84 @@ public final class HarderWardens extends JavaPlugin implements Listener {
         config.addDefault("warden_damage", 1.0);
         config.addDefault("warden_loot_option_1", 1);
         config.addDefault("warden_loot_option_2", 2);
+    }
+
+    public class WardenLootManager {
+        // Easy difficulty loot array
+        public static final List<ItemStack> easyCommon = new ArrayList<>();
+        public static final List<ItemStack> easyRare = new ArrayList<>();
+        // Normal difficulty loot array
+        public static final List<ItemStack> normalCommon = new ArrayList<>();
+        public static final List<ItemStack> normalRare = new ArrayList<>();
+        // Hard difficulty loot array
+        public static final List<ItemStack> hardCommon = new ArrayList<>();
+        public static final List<ItemStack> hardRare = new ArrayList<>();
+        // Nightmare difficulty loot array
+        public static final List<ItemStack> nightmareCommon = new ArrayList<>();
+        public static final List<ItemStack> nightmareRare = new ArrayList<>();
+        // Insane difficulty loot array
+        public static final List<ItemStack> insaneCommon = new ArrayList<>();
+        public static final List<ItemStack> insaneRare = new ArrayList<>();
+
+        public static void init() {
+            // ==== EASY ====
+            easyCommon.add(new ItemStack(Material.IRON_INGOT, 3));
+            easyCommon.add(new ItemStack(Material.AMETHYST_SHARD, 4));
+            easyCommon.add(new ItemStack(Material.LAPIS_LAZULI, 5));
+
+            easyRare.add(new ItemStack(Material.DIAMOND, 1));
+            easyRare.add(new ItemStack(Material.GOLDEN_APPLE, 1));
+
+            // ==== NORMAL ====
+            normalCommon.add(new ItemStack(Material.GOLD_INGOT, 4));
+            normalCommon.add(new ItemStack(Material.REDSTONE, 6));
+            normalCommon.add(new ItemStack(Material.EMERALD, 2));
+
+            normalRare.add(new ItemStack(Material.NETHERITE_SCRAP, 1));
+            normalRare.add(new ItemStack(Material.ENDER_PEARL, 2));
+
+            // ==== HARD ====
+            hardCommon.add(new ItemStack(Material.QUARTZ, 5));
+            hardCommon.add(new ItemStack(Material.BLAZE_ROD, 2));
+            hardCommon.add(new ItemStack(Material.DIAMOND, 2));
+
+            hardRare.add(new ItemStack(Material.TOTEM_OF_UNDYING, 1));
+
+            // ==== NIGHTMARE ====
+            nightmareCommon.add(new ItemStack(Material.DIAMOND, 3));
+            nightmareCommon.add(new ItemStack(Material.ENDER_PEARL, 3));
+            nightmareCommon.add(new ItemStack(Material.BLAZE_POWDER, 2));
+
+            nightmareRare.add(new ItemStack(Material.NETHERITE_SCRAP, 2));
+            nightmareRare.add(new ItemStack(Material.ENCHANTED_GOLDEN_APPLE, 1));
+
+            // ==== INSANE ====
+            insaneCommon.add(new ItemStack(Material.NETHERITE_SCRAP, 3));
+            insaneCommon.add(new ItemStack(Material.END_CRYSTAL, 1));
+            insaneCommon.add(new ItemStack(Material.GHAST_TEAR, 2));
+
+            insaneRare.add(new ItemStack(Material.NETHERITE_INGOT, 1));
+            insaneRare.add(new ItemStack(Material.TOTEM_OF_UNDYING, 1));
+
+            // ==== ENCHANTED BOOKS, ARMOR AND WEAPONS ====
+            // Unbreaking 1 Book
+            ItemStack bookUnbreaking1 = new ItemStack(Material.ENCHANTED_BOOK, 1);
+            EnchantmentStorageMeta metaUnbreaking1 = (EnchantmentStorageMeta) bookUnbreaking1.getItemMeta();
+            if (metaUnbreaking1 != null) {
+                metaUnbreaking1.addStoredEnchant(Enchantment.UNBREAKING, 1, true);
+                bookUnbreaking1.setItemMeta(metaUnbreaking1);
+            }
+            easyRare.add(bookUnbreaking1);
+
+            // Protection 1 Book
+            ItemStack bookProtection1 = new ItemStack(Material.ENCHANTED_BOOK, 1);
+            EnchantmentStorageMeta metaProtection1 = (EnchantmentStorageMeta) bookProtection1.getItemMeta();
+            if (metaProtection1 != null) {
+                metaProtection1.addStoredEnchant(Enchantment.PROTECTION, 1, true);
+                bookProtection1.setItemMeta(metaProtection1);
+            }
+            easyRare.add(bookProtection1);
+        }
     }
 
     @EventHandler
@@ -84,127 +168,7 @@ public final class HarderWardens extends JavaPlugin implements Listener {
             }
         }
     }
-    @EventHandler
-    public void wardenDeathEvent(EntityDeathEvent e) {
-/*
-        LivingEntity ent = e.getEntity();
-        Random ran = new Random();
-        int num = ran.nextInt(100);
 
-        String warden_difficulty = this.getConfig().getString("warden_difficulty", "NORMAL");
-        if (ent.getType() == EntityType.WARDEN) {
-            e.getDrops().clear();
-            if (warden_difficulty.equals("EASY")) { // Loot from wardens on easy difficulty (Tier 1 drops)
-
-                e.getDrops().add(new ItemStack(Material.IRON_INGOT, 12)); // 12 Iron Ingots
-                e.getDrops().add(new ItemStack(Material.GOLD_INGOT, 12)); // 12 Gold Ingots
-
-                ItemStack low_level_book1 = new ItemStack(Material.ENCHANTED_BOOK, 1);
-                EnchantmentStorageMeta meta1 = (EnchantmentStorageMeta)low_level_book1.getItemMeta();
-                meta1.addStoredEnchant(Enchantment.SWIFT_SNEAK, 1, true);
-                low_level_book1.setItemMeta(meta1);
-                e.getDrops().add(low_level_book1); // Swift Sneak 1 Book
-
-                ItemStack low_level_book2 = new ItemStack(Material.ENCHANTED_BOOK, 1);
-                EnchantmentStorageMeta meta2 = (EnchantmentStorageMeta)low_level_book2.getItemMeta();
-                meta2.addStoredEnchant(Enchantment.UNBREAKING, 1, true);
-                low_level_book2.setItemMeta(meta2);
-                e.getDrops().add(low_level_book2); // Unbreaking 1 Book
-
-                ItemStack fragment = new ItemStack(Material.CHARCOAL, 1);
-                ItemMeta itemStackMeta = fragment.getItemMeta();
-                itemStackMeta.setDisplayName(ChatColor.DARK_PURPLE + "Warden's Fragment");
-                itemStackMeta.setLore(Collections.singletonList(ChatColor.DARK_GREEN + "A custom drop from Warden. Doesn't have any uses yet."));
-                itemStackMeta.addEnchant(Enchantment.INFINITY, 1, true);
-                itemStackMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                fragment.setItemMeta(itemStackMeta);
-                e.getDrops().add(fragment); // Custom item for easy difficulty wardens - Warden's Fragment
-
-            } else if (warden_difficulty.equals("NORMAL")) { //  Loot from wardens on normal difficulty (Tier 2 drops)
-
-                e.getDrops().add(new ItemStack(Material.NETHERITE_SCRAP, 2)); // 2 Netherite Scraps
-                e.getDrops().add(new ItemStack(Material.DIAMOND, 5)); // 5 Diamonds
-
-                ItemStack mid_level_book1 = new ItemStack(Material.ENCHANTED_BOOK, 1);
-                EnchantmentStorageMeta meta1 = (EnchantmentStorageMeta)mid_level_book1.getItemMeta();
-                meta1.addStoredEnchant(Enchantment.SWIFT_SNEAK, 2, true);
-                mid_level_book1.setItemMeta(meta1);
-                e.getDrops().add(mid_level_book1); // Swift Sneak 2 Book
-
-                ItemStack mid_level_book2 = new ItemStack(Material.ENCHANTED_BOOK, 1);
-                EnchantmentStorageMeta meta2 = (EnchantmentStorageMeta)mid_level_book2.getItemMeta();
-                meta2.addStoredEnchant(Enchantment.PROTECTION, 2, true);
-                mid_level_book2.setItemMeta(meta2);
-                e.getDrops().add(mid_level_book2); // Protection 2 Book
-
-                ItemStack fragment = new ItemStack(Material.ECHO_SHARD, 1);
-                ItemMeta itemStackMeta = fragment.getItemMeta();
-                itemStackMeta.setDisplayName(ChatColor.DARK_PURPLE + "Dark Essence");
-                itemStackMeta.setLore(Collections.singletonList(ChatColor.DARK_GREEN + "A custom drop from Warden. Doesn't have any uses yet."));
-                itemStackMeta.addEnchant(Enchantment.INFINITY, 1, true);
-                itemStackMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                fragment.setItemMeta(itemStackMeta);
-                e.getDrops().add(fragment); // Custom item for normal difficulty wardens - Dark Essence
-
-            } else if (warden_difficulty.equals("HARD")) { // Loot from wardens on hard difficulty (Tier 3 drops)
-
-                ItemStack enc_dia_chestplate = new ItemStack(Material.DIAMOND_CHESTPLATE, 1);
-                ItemMeta itemStackMeta1 = enc_dia_chestplate.getItemMeta();
-                itemStackMeta1.addEnchant(Enchantment.PROTECTION, 4, true);
-                itemStackMeta1.addEnchant(Enchantment.UNBREAKING, 3, true);
-                enc_dia_chestplate.setItemMeta(itemStackMeta1);
-                e.getDrops().add(enc_dia_chestplate); // Enchanted Diamond Chestplate
-
-                ItemStack high_level_book1 = new ItemStack(Material.ENCHANTED_BOOK, 1);
-                EnchantmentStorageMeta meta1 = (EnchantmentStorageMeta)high_level_book1.getItemMeta();
-                meta1.addStoredEnchant(Enchantment.SWIFT_SNEAK, 3, true);
-                high_level_book1.setItemMeta(meta1);
-                e.getDrops().add(high_level_book1); // Swift Sneak 3 Book
-
-                ItemStack high_level_book2 = new ItemStack(Material.ENCHANTED_BOOK, 1);
-                EnchantmentStorageMeta meta2 = (EnchantmentStorageMeta)high_level_book2.getItemMeta();
-                meta2.addStoredEnchant(Enchantment.SHARPNESS, 4, true);
-                high_level_book2.setItemMeta(meta2);
-                e.getDrops().add(high_level_book2); // Sharpness 4 Book
-
-                ItemStack fragment2 = new ItemStack(Material.AMETHYST_SHARD, 1);
-                ItemMeta itemStackMeta2 = fragment2.getItemMeta();
-                itemStackMeta2.setDisplayName(ChatColor.DARK_PURPLE + "Void Fragment");
-                itemStackMeta2.setLore(Collections.singletonList(ChatColor.DARK_GREEN + "A custom drop from Warden. Doesn't have any uses yet."));
-                itemStackMeta2.addEnchant(Enchantment.INFINITY, 1, true);
-                itemStackMeta2.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                fragment2.setItemMeta(itemStackMeta2);
-                e.getDrops().add(fragment2); // Custom item for hard difficulty wardens - Void Fragment
-
-            } else { // if difficulty not set correctly, default difficulty (normal) will be used
-
-                e.getDrops().add(new ItemStack(Material.NETHERITE_SCRAP, 2)); // 2 Netherite Scraps
-                e.getDrops().add(new ItemStack(Material.DIAMOND, 5)); // 5 Diamonds
-
-                ItemStack mid_level_book1 = new ItemStack(Material.ENCHANTED_BOOK, 1);
-                EnchantmentStorageMeta meta1 = (EnchantmentStorageMeta)mid_level_book1.getItemMeta();
-                meta1.addStoredEnchant(Enchantment.SWIFT_SNEAK, 2, true);
-                mid_level_book1.setItemMeta(meta1);
-                e.getDrops().add(mid_level_book1); // Swift Sneak 2 Book
-
-                ItemStack mid_level_book2 = new ItemStack(Material.ENCHANTED_BOOK, 1);
-                EnchantmentStorageMeta meta2 = (EnchantmentStorageMeta)mid_level_book2.getItemMeta();
-                meta2.addStoredEnchant(Enchantment.PROTECTION, 2, true);
-                mid_level_book2.setItemMeta(meta2);
-                e.getDrops().add(mid_level_book2); // Protection 2 Book
-
-                ItemStack fragment = new ItemStack(Material.ECHO_SHARD, 1);
-                ItemMeta itemStackMeta = fragment.getItemMeta();
-                itemStackMeta.setDisplayName(ChatColor.DARK_PURPLE + "Dark Essence");
-                itemStackMeta.setLore(Collections.singletonList(ChatColor.DARK_GREEN + "A custom drop from Warden. Doesn't have any uses yet."));
-                itemStackMeta.addEnchant(Enchantment.INFINITY, 1, true);
-                itemStackMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                fragment.setItemMeta(itemStackMeta);
-                e.getDrops().add(fragment); // Custom item for normal difficulty wardens - Dark Essence
-
-            }
-        }*/
-    }
     @EventHandler
     public void wardenAttackEvent(EntityDamageByEntityEvent e) {
         String warden_difficulty = this.getConfig().getString("warden_difficulty", "NORMAL");
@@ -235,5 +199,10 @@ public final class HarderWardens extends JavaPlugin implements Listener {
                 e.setDamage(newDamage);
             }
         }
+    }
+
+    @EventHandler
+    public void wardenDeathEvent(EntityDeathEvent e) {
+
     }
 }
