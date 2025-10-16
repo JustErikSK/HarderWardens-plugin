@@ -212,12 +212,28 @@ public final class HarderWardens extends JavaPlugin implements Listener {
             WardenDifficulty.CUSTOM, 0.50
     );
 
+    private static final Map<String, WardenDifficulty> DIFF_ALIASES = new HashMap<>();
+    static {
+        DIFF_ALIASES.put("easy", WardenDifficulty.EASY);
+        DIFF_ALIASES.put("normal", WardenDifficulty.NORMAL);
+        DIFF_ALIASES.put("hard", WardenDifficulty.HARD);
+        DIFF_ALIASES.put("nightmare", WardenDifficulty.NIGHTMARE);
+        DIFF_ALIASES.put("insane", WardenDifficulty.INSANE);
+    }
+
     private WardenDifficulty getActiveDifficulty() {
-        String raw = this.getConfig().getString("warden_difficulty", "NORMAL").toLowerCase(Locale.ROOT);
+        String raw = this.getConfig().getString("warden_difficulty", "NORMAL");
+        if (raw == null) return WardenDifficulty.NORMAL;
+
+        String key = raw.trim().toLowerCase(Locale.ROOT);
+        WardenDifficulty mapped = DIFF_ALIASES.get(key);
+        if (mapped != null) return mapped;
+
         try {
-            return WardenDifficulty.valueOf(raw);
+            String norm = raw.trim().replace('-', '_').replace(' ', '_').toUpperCase(Locale.ROOT);
+            return WardenDifficulty.valueOf(norm);
         } catch (IllegalArgumentException ex) {
-            this.getLogger().warning("Invalid difficulty in config: " + raw + " (defaulting to NORMAL)");
+            getLogger().warning("Invalid difficulty in config: " + raw + " (defaulting to NORMAL)");
             return WardenDifficulty.NORMAL;
         }
     }
