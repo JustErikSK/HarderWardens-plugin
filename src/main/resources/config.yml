@@ -4,7 +4,7 @@
 warden_difficulty: NORMAL   # EASY | NORMAL | HARD | NIGHTMARE | INSANE | CUSTOM
 
 # Settings for custom difficulty - CUSTOM has to be set as the warden's difficulty
-warden_health: 100   # Minimum = 1 | Maximum = 10000
+warden_health: 100   # Minimum = 1 | Maximum = 1024
 warden_damage: 1.0   # Minimum = 0.1 | Maximum = 100.0
 warden_loot_option_1: 1   # Details for each loot tier below
 warden_loot_option_2: 2   # Details for each loot tier below
@@ -12,17 +12,17 @@ warden_loot_option_2: 2   # Details for each loot tier below
 # Details for each difficulty:
 
 # Difficulty EASY details:
-#   Warden's Health: 100 hp (50 hearts)
+#   Warden's Health: 300 hp (150 hearts)
 #   Warden's Damage: 0.5x multiplier
 #   Loot options: 1 and 2
 
 # Difficulty NORMAL details:
-#   Warden's Health: 250 hp (125 hearts)
+#   Warden's Health: 500 hp (250 hearts)
 #   Warden's Damage: 1.5x multiplier
 #   Loot options: 3 and 4
 
 # Difficulty HARD details:
-#   Warden's Health: 500 hp (250 hearts)
+#   Warden's Health: 700 hp (350 hearts)
 #   Warden's Damage: 2.5x multiplier
 #   Loot options: 5 and 6
 
@@ -32,7 +32,7 @@ warden_loot_option_2: 2   # Details for each loot tier below
 #   Loot options: 7 and 8
 
 # Difficulty INSANE details:
-#   Warden's Health: 1200 hp (600 hearts)
+#   Warden's Health: 1024 hp (512 hearts)
 #   Warden's Damage: 4.5x multiplier
 #   Loot options: 9 and 10
 

@@ -130,20 +130,20 @@ public final class HarderWardens extends JavaPlugin implements Listener {
                     ent.setCustomName("Echo Lurker"); // Warden's name on easy difficulty is Echo Lurker
                     ent.setCustomNameVisible(false);
                     ent.setPersistent(ent.isCustomNameVisible());
-                    ent.setMaxHealth(100);
-                    ent.setHealth(100);
+                    ent.setMaxHealth(300);
+                    ent.setHealth(300);
                 } else if (warden_difficulty.equals("NORMAL")) { // 250HP (125 hearts) on normal difficulty
                     ent.setCustomName("Abyss Killer"); // Warden's name on normal difficulty is Abyss Killer
                     ent.setCustomNameVisible(false);
                     ent.setPersistent(ent.isCustomNameVisible());
-                    ent.setMaxHealth(250);
-                    ent.setHealth(250);
+                    ent.setMaxHealth(500);
+                    ent.setHealth(500);
                 } else if (warden_difficulty.equals("HARD")) { // 500HP (250 hearts) on hard difficulty
                     ent.setCustomName("Void Reaper"); // Warden's name on hard difficulty is Void Reaper
                     ent.setCustomNameVisible(false);
                     ent.setPersistent(ent.isCustomNameVisible());
-                    ent.setMaxHealth(500);
-                    ent.setHealth(500);
+                    ent.setMaxHealth(700);
+                    ent.setHealth(700);
                 } else if (warden_difficulty.equals("NIGHTMARE")) { // 900HP (450 hearts) on nightmare difficulty
                     ent.setCustomName("Nightmare Sentinel"); // Warden's name on hard difficulty is Nightmare Sentinel
                     ent.setCustomNameVisible(false);
@@ -154,14 +154,14 @@ public final class HarderWardens extends JavaPlugin implements Listener {
                     ent.setCustomName("Abyssal Devourer"); // Warden's name on hard difficulty is Abyssal Devourer
                     ent.setCustomNameVisible(false);
                     ent.setPersistent(ent.isCustomNameVisible());
-                    ent.setMaxHealth(1200);
-                    ent.setHealth(1200);
+                    ent.setMaxHealth(1024);
+                    ent.setHealth(1024);
                 } else { // if difficulty not set correctly, default difficulty (normal) will be used
                     ent.setCustomName("Abyss Killer");
                     ent.setCustomNameVisible(false);
                     ent.setPersistent(ent.isCustomNameVisible());
-                    ent.setMaxHealth(250);
-                    ent.setHealth(250);
+                    ent.setMaxHealth(500);
+                    ent.setHealth(500);
                 }
             }
         }
