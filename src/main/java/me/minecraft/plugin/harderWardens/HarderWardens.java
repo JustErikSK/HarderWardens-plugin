@@ -19,10 +19,8 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class HarderWardens extends JavaPlugin implements Listener {
 
@@ -201,8 +199,83 @@ public final class HarderWardens extends JavaPlugin implements Listener {
         }
     }
 
+    public enum WardenDifficulty {
+        EASY, NORMAL, HARD, NIGHTMARE, INSANE, CUSTOM
+    }
+
+    private static final Map<WardenDifficulty, Double> RARE_CHANCE = Map.of(
+            WardenDifficulty.EASY, 0.25,
+            WardenDifficulty.NORMAL, 0.35,
+            WardenDifficulty.HARD, 0.45,
+            WardenDifficulty.NIGHTMARE, 0.55,
+            WardenDifficulty.INSANE, 0.65,
+            WardenDifficulty.CUSTOM, 0.50
+    );
+
+    private WardenDifficulty getActiveDifficulty() {
+        String raw = this.getConfig().getString("warden_difficulty", "NORMAL").toLowerCase(Locale.ROOT);
+        try {
+            return WardenDifficulty.valueOf(raw);
+        } catch (IllegalArgumentException ex) {
+            this.getLogger().warning("Invalid difficulty in config: " + raw + " (defaulting to NORMAL)");
+            return WardenDifficulty.NORMAL;
+        }
+    }
+
+    private List<ItemStack> getCommonPool(WardenDifficulty diff) {
+        switch (diff) {
+            case EASY : return WardenLootManager.easyCommon;
+            case NORMAL : return WardenLootManager.normalCommon;
+            case HARD : return WardenLootManager.hardCommon;
+            case NIGHTMARE : return WardenLootManager.nightmareCommon;
+            case INSANE : return WardenLootManager.insaneCommon;
+            default : return Collections.emptyList();
+        }
+    }
+
+    private List<ItemStack> getRarePool(WardenDifficulty diff) {
+        switch (diff) {
+            case EASY : return WardenLootManager.easyRare;
+            case NORMAL : return WardenLootManager.normalRare;
+            case HARD : return WardenLootManager.hardRare;
+            case NIGHTMARE : return WardenLootManager.nightmareRare;
+            case INSANE : return WardenLootManager.insaneRare;
+            default : return Collections.emptyList();
+        }
+    }
+
     @EventHandler
     public void wardenDeathEvent(EntityDeathEvent e) {
+        if (e.getEntityType() != EntityType.WARDEN) return;
 
+        int xp = e.getDroppedExp();
+        e.getDrops().clear();
+
+        WardenDifficulty diff = getActiveDifficulty();
+
+        List<ItemStack> common = getCommonPool(diff);
+        List<ItemStack> rare = getRarePool(diff);
+
+        if (common.isEmpty() && rare.isEmpty()) return;
+
+        double rareChance = RARE_CHANCE.getOrDefault(diff, 0.35);
+        boolean pickRare = ThreadLocalRandom.current().nextDouble() < rareChance;
+
+        List<ItemStack> chosen = pickRare ? rare : common;
+
+        if (chosen.isEmpty()) {
+            chosen = pickRare ? common : rare;
+            if (chosen.isEmpty()) return;
+        }
+
+        for (ItemStack template : chosen) {
+            if (template == null || template.getType() == Material.AIR) continue;
+            e.getEntity().getWorld().dropItemNaturally(
+                    e.getEntity().getLocation(),
+                    template.clone()
+            );
+        }
+
+        e.setDroppedExp(xp);
     }
 }

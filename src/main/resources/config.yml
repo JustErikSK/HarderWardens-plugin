@@ -1,19 +1,13 @@
 # Configuration file for Harder Wardens plugin
-# You can set Warden's difficulty level here
 
 # WARDEN'S DIFFICULTY LEVEL
-# This will apply to all Wardens
-# (Default = NORMAL; Options = CUSTOM, EASY, NORMAL, HARD, NIGHTMARE, INSANE)
-warden_difficulty: NORMAL
+warden_difficulty: NORMAL   # EASY | NORMAL | HARD | NIGHTMARE | INSANE | CUSTOM
 
 # Settings for custom difficulty - CUSTOM has to be set as the warden's difficulty
-# (Health: Default = 100; Min = 1; Max = 10000)
-# (Damage: Default = 1.0; Min = 0.1; Max = 100.0)
-# (Loot: Default = 1 and 2; Options = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10; Details for each loot tier below)
-warden_health: 100
-warden_damage: 1.0
-warden_loot_option_1: 1
-warden_loot_option_2: 2
+warden_health: 100   # Minimum = 1 | Maximum = 10000
+warden_damage: 1.0   # Minimum = 0.1 | Maximum = 100.0
+warden_loot_option_1: 1   # Details for each loot tier below
+warden_loot_option_2: 2   # Details for each loot tier below
 
 # Details for each difficulty:
 
@@ -47,15 +41,15 @@ warden_loot_option_2: 2
 
 # Loot 0: This one disables loot
 # Loot 1: 3x Iron Ingots, 4x Amethyst Shards, 5x Lapis Lazuli
-# Loot 2: 1x Diamond, 1x Golden Apple, 1x Enchanted Book with either Unbreaking 1 or Protection 1
+# Loot 2: 1x Diamond, 1x Golden Apple, 1x Enchanted Book
 # Loot 3: 4x Gold Ingots, 6x Redstones, 2x Emeralds
-# Loot 4: 1x Netherite Scrap, 2x Ender Pearls, 1x Enchanted Book with either Efficiency 2 or Sharpness 2
+# Loot 4: 1x Netherite Scrap, 2x Ender Pearls, 1x Enchanted Book
 # Loot 5: 5x Nether Quartz, 2x Blaze Rods, 2x Diamonds
-# Loot 6: 1x Totem of Undying, 1x Enchanted Tool (pickaxe, sword or axe with lvl2-3 enchants), 1x Enchanted Book with either Looting 2 or Protection 3 or Efficiency 3
+# Loot 6: 1x Totem of Undying, 1x Enchanted Tool, 1x Enchanted Book
 # Loot 7: 3x Diamonds, 3x Ender Pearls, 2x Blaze Powders
-# Loot 8: 2x Netherite Scraps, 1x Enchanted Armor Piece (boots, leggings, chestplate or helmet with lvl3-4 enchants), 1x Enchanted Golden Apple
+# Loot 8: 2x Netherite Scraps, 1x Enchanted Armor Piece, 1x Enchanted Golden Apple
 # Loot 9: 3x Netherite Scraps, 1x End Crystal, 2x Ghast Tears
-# Loot 10: 1x Netherite Ingot, 1x Totem of Undying, 1x Enchanted Netherite Weapon (sword or axe with lvl4-5 enchants)
+# Loot 10: 1x Netherite Ingot, 1x Totem of Undying, 1x Enchanted Netherite Weapon
 
 # Version 1.2 works for MC versions 1.21 - 1.21.10
 # End of config file
