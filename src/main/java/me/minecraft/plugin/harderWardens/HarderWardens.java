@@ -1,18 +1,11 @@
 package me.minecraft.plugin.harderWardens;
 
-import io.papermc.paper.command.brigadier.BasicCommand;
-import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Warden;
@@ -22,13 +15,15 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import static me.minecraft.plugin.harderWardens.HarderWardens.WardenDifficulty.*;
 
 public final class HarderWardens extends JavaPlugin implements Listener {
+
+    private Attribute ATTR_MAX_HEALTH;
+    private Attribute ATTR_ATTACK_DAMAGE;
 
     @Override
     public void onEnable() {
@@ -47,6 +42,12 @@ public final class HarderWardens extends JavaPlugin implements Listener {
         config.addDefault("warden_damage", 1.0);
         config.addDefault("warden_loot_option_1", 1);
         config.addDefault("warden_loot_option_2", 2);
+
+        ATTR_MAX_HEALTH = findAttribute("max_health", "generic.max_health");
+        ATTR_ATTACK_DAMAGE = findAttribute("attack_damage", "generic.attack_damage");
+
+        if (ATTR_MAX_HEALTH == null) getLogger().warning("Could not resolve attribute: max_health");
+        if (ATTR_ATTACK_DAMAGE == null) getLogger().warning("Could not resolve attribute: attack_damage");
     }
 
     public static class WardenLootManager {
@@ -129,17 +130,26 @@ public final class HarderWardens extends JavaPlugin implements Listener {
 
     private static final double HEALTH_CAP = 1024.0;
 
+    private static Attribute findAttribute(String... minecraftKeys) {
+        for (String k : minecraftKeys) {
+            Attribute attr = Registry.ATTRIBUTE.get(NamespacedKey.minecraft(k));
+            if (attr != null) return attr;
+        }
+        return null;
+    }
+
     private void applyHealth(LivingEntity ent, double requestedMaxHealth, boolean healToFull) {
         double finalMax = Math.min(requestedMaxHealth, HEALTH_CAP);
 
-        AttributeInstance attr = ent.getAttribute(Attribute.MAX_HEALTH);
+        AttributeInstance attr = (ATTR_MAX_HEALTH == null) ? null : ent.getAttribute(ATTR_MAX_HEALTH);
         if (attr != null) {
             attr.setBaseValue(finalMax);
         }
+
         if (healToFull) {
             ent.setHealth(finalMax);
         } else {
-            ent.setHealth(Math.min(ent.getHealth(),  finalMax));
+            ent.setHealth(Math.min(ent.getHealth(), finalMax));
         }
     }
 
@@ -255,11 +265,11 @@ public final class HarderWardens extends JavaPlugin implements Listener {
         double cfgHP = Math.max(HEALTH_MIN, Math.min(HEALTH_MAX, getConfig().getDouble("warden_health", 100.0)));
         double cfgDMG = Math.max(DMG_MIN, Math.min(DMG_MAX, getConfig().getDouble("warden_damage", 1.0)));
 
-        AttributeInstance hpAttr = ent.getAttribute(Attribute.MAX_HEALTH);
+        AttributeInstance hpAttr = (ATTR_MAX_HEALTH == null) ? null : ent.getAttribute(ATTR_MAX_HEALTH);
         if (hpAttr != null) hpAttr.setBaseValue(cfgHP);
         ent.setHealth(Math.min(cfgHP, HEALTH_MAX));
 
-        AttributeInstance dmgAttr = ent.getAttribute(Attribute.ATTACK_DAMAGE);
+        AttributeInstance dmgAttr = (ATTR_ATTACK_DAMAGE == null) ? null : ent.getAttribute(ATTR_ATTACK_DAMAGE);
         if (dmgAttr != null) dmgAttr.setBaseValue(cfgDMG);
     }
 
