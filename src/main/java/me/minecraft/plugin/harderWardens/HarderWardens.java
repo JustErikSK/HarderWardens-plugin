@@ -47,53 +47,6 @@ public final class HarderWardens extends JavaPlugin implements Listener {
         config.addDefault("warden_damage", 1.0);
         config.addDefault("warden_loot_option_1", 1);
         config.addDefault("warden_loot_option_2", 2);
-
-        registerCommand(
-                "harderwardens",
-                "Command to reload config for Harder Wardens plugin",
-                List.of("hw"),
-                new HarderWardensCommand(this)
-        );
-        getLogger().info("Harder Wardens enabled!");
-    }
-
-    public final class HarderWardensCommand implements BasicCommand {
-
-        private final HarderWardens plugin;
-
-        public HarderWardensCommand(HarderWardens plugin) {
-            this.plugin = plugin;
-        }
-
-        @Override
-        public void execute(CommandSourceStack source, String[] args) {
-            CommandSender sender = source.getSender();
-
-            // Permission
-            if (!sender.hasPermission("harderwardens.admin")) {
-                sender.sendMessage("§cYou don't have permission to use this command.");
-                return;
-            }
-
-            if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-                plugin.reloadPluginConfig(); // your method that calls reloadConfig() + refreshes cached values if you use them
-                sender.sendMessage("§aHarder Wardens config reloaded!");
-                return;
-            }
-
-            sender.sendMessage("§cUsage: /harderwardens reload");
-        }
-
-        @Override
-        public Collection<String> suggest(CommandSourceStack source, String[] args) {
-            if (args.length == 1) return List.of("reload");
-            return List.of();
-        }
-    }
-
-    public void reloadPluginConfig() {
-        reloadConfig();
-        getLogger().info("Harder Wardens config reloaded.");
     }
 
     public static class WardenLootManager {
