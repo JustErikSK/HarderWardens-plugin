@@ -85,6 +85,7 @@ public final class HarderWardens extends JavaPlugin implements Listener {
             hardCommon.add(new ItemStack(Material.DIAMOND, 2));
 
             hardRare.add(new ItemStack(Material.TOTEM_OF_UNDYING, 1));
+            hardRare.add(new ItemStack(Material.DIAMOND, 5));
 
             // ==== NIGHTMARE ====
             nightmareCommon.add(new ItemStack(Material.DIAMOND, 3));
@@ -101,25 +102,6 @@ public final class HarderWardens extends JavaPlugin implements Listener {
 
             insaneRare.add(new ItemStack(Material.NETHERITE_INGOT, 1));
             insaneRare.add(new ItemStack(Material.TOTEM_OF_UNDYING, 1));
-
-            // ==== ENCHANTED BOOKS, ARMOR AND WEAPONS ====
-            // Unbreaking 1 Book
-            ItemStack bookUnbreaking1 = new ItemStack(Material.ENCHANTED_BOOK, 1);
-            EnchantmentStorageMeta metaUnbreaking1 = (EnchantmentStorageMeta) bookUnbreaking1.getItemMeta();
-            if (metaUnbreaking1 != null) {
-                metaUnbreaking1.addStoredEnchant(Enchantment.UNBREAKING, 1, true);
-                bookUnbreaking1.setItemMeta(metaUnbreaking1);
-            }
-            easyRare.add(bookUnbreaking1);
-
-            // Protection 1 Book
-            ItemStack bookProtection1 = new ItemStack(Material.ENCHANTED_BOOK, 1);
-            EnchantmentStorageMeta metaProtection1 = (EnchantmentStorageMeta) bookProtection1.getItemMeta();
-            if (metaProtection1 != null) {
-                metaProtection1.addStoredEnchant(Enchantment.PROTECTION, 1, true);
-                bookProtection1.setItemMeta(metaProtection1);
-            }
-            easyRare.add(bookProtection1);
         }
     }
 

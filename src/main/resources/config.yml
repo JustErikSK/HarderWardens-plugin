@@ -41,15 +41,15 @@ warden_loot_option_2: 2   # Details for each loot tier below
 
 # Loot 0: This one disables loot
 # Loot 1: 3x Iron Ingots, 4x Amethyst Shards, 5x Lapis Lazuli
-# Loot 2: 1x Diamond, 1x Golden Apple, 1x Enchanted Book
+# Loot 2: 1x Diamond, 1x Golden Apple
 # Loot 3: 4x Gold Ingots, 6x Redstones, 2x Emeralds
-# Loot 4: 1x Netherite Scrap, 2x Ender Pearls, 1x Enchanted Book
+# Loot 4: 1x Netherite Scrap, 2x Ender Pearls
 # Loot 5: 5x Nether Quartz, 2x Blaze Rods, 2x Diamonds
-# Loot 6: 1x Totem of Undying, 1x Enchanted Tool, 1x Enchanted Book
+# Loot 6: 1x Totem of Undying, 5x Diamonds
 # Loot 7: 3x Diamonds, 3x Ender Pearls, 2x Blaze Powders
-# Loot 8: 2x Netherite Scraps, 1x Enchanted Armor Piece, 1x Enchanted Golden Apple
+# Loot 8: 2x Netherite Scraps, 1x Enchanted Golden Apple
 # Loot 9: 3x Netherite Scraps, 1x End Crystal, 2x Ghast Tears
-# Loot 10: 1x Netherite Ingot, 1x Totem of Undying, 1x Enchanted Netherite Weapon
+# Loot 10: 1x Netherite Ingot, 1x Totem of Undying
 
 # Version 1.2 works for MC versions 1.21 - 1.21.11
 # End of config file
