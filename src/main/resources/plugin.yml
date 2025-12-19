@@ -5,3 +5,8 @@ api-version: 1.21
 authors: [ JustErikSK ]
 description: Wardens have much more health and deal more damage but they also give good rewards for defeating them, all of this based on the warden's difficulty set in the config file!
 folia-supported: true
+commands:
+  harderwardens:
+    description: Command to reload config for Harder Wardens plugin
+    usage: /harderwardens reload
+    permission: harderwardens.admin

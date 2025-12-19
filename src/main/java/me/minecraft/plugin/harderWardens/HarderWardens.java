@@ -7,6 +7,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -43,6 +45,25 @@ public final class HarderWardens extends JavaPlugin implements Listener {
         config.addDefault("warden_damage", 1.0);
         config.addDefault("warden_loot_option_1", 1);
         config.addDefault("warden_loot_option_2", 2);
+    }
+
+    public void reloadPluginConfig() {
+        reloadConfig();
+        getLogger().info("Configuration for Harder Wardens has been reloaded!");
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (command.getName().equalsIgnoreCase("harderwardens")) {
+            if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+                reloadPluginConfig();
+                sender.sendMessage(ChatColor.GREEN + "Configuration for Harder Wardens has been reloaded!");
+                return true;
+            }
+            sender.sendMessage(ChatColor.RED + "Usage: /harderwardens reload");
+            return true;
+        }
+        return false;
     }
 
     public static class WardenLootManager {
