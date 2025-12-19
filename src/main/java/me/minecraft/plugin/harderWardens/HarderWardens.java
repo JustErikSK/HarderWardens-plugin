@@ -1,8 +1,12 @@
 package me.minecraft.plugin.harderWardens;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -10,17 +14,15 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Warden;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import static me.minecraft.plugin.harderWardens.HarderWardens.WardenDifficulty.*;
 
 public final class HarderWardens extends JavaPlugin implements Listener {
 
@@ -29,6 +31,7 @@ public final class HarderWardens extends JavaPlugin implements Listener {
         Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GREEN + "Harder Wardens >> Plugin has been enabled!");
         this.getServer().getPluginManager().registerEvents(this, this);
         this.saveDefaultConfig();
+        validateCustomLootOptions();
 
         getLogger().info("Harder Wardens is loading loot tables...");
         WardenLootManager.init();
@@ -42,7 +45,7 @@ public final class HarderWardens extends JavaPlugin implements Listener {
         config.addDefault("warden_loot_option_2", 2);
     }
 
-    public class WardenLootManager {
+    public static class WardenLootManager {
         // Easy difficulty loot array
         public static final List<ItemStack> easyCommon = new ArrayList<>();
         public static final List<ItemStack> easyRare = new ArrayList<>();
@@ -120,82 +123,100 @@ public final class HarderWardens extends JavaPlugin implements Listener {
         }
     }
 
-    @EventHandler
-    public void wardenSpawnEvent(EntitySpawnEvent e) {
+    private static final List<List<ItemStack>> LOOT_POOLS = List.of(
+            WardenLootManager.easyCommon,
+            WardenLootManager.easyRare,
+            WardenLootManager.normalCommon,
+            WardenLootManager.normalRare,
+            WardenLootManager.hardCommon,
+            WardenLootManager.hardRare,
+            WardenLootManager.nightmareCommon,
+            WardenLootManager.nightmareRare,
+            WardenLootManager.insaneCommon,
+            WardenLootManager.insaneRare
+    );
 
-        String warden_difficulty = this.getConfig().getString("warden_difficulty", "NORMAL");
-        if (e.getEntity() instanceof LivingEntity ent) {
-            if (ent.getType() == EntityType.WARDEN) {
-                if (warden_difficulty.equals("EASY")) { // 100HP (50 hearts) on easy difficulty
-                    ent.setCustomName("Echo Lurker"); // Warden's name on easy difficulty is Echo Lurker
-                    ent.setCustomNameVisible(false);
-                    ent.setPersistent(ent.isCustomNameVisible());
-                    ent.setMaxHealth(300);
-                    ent.setHealth(300);
-                } else if (warden_difficulty.equals("NORMAL")) { // 250HP (125 hearts) on normal difficulty
-                    ent.setCustomName("Abyss Killer"); // Warden's name on normal difficulty is Abyss Killer
-                    ent.setCustomNameVisible(false);
-                    ent.setPersistent(ent.isCustomNameVisible());
-                    ent.setMaxHealth(500);
-                    ent.setHealth(500);
-                } else if (warden_difficulty.equals("HARD")) { // 500HP (250 hearts) on hard difficulty
-                    ent.setCustomName("Void Reaper"); // Warden's name on hard difficulty is Void Reaper
-                    ent.setCustomNameVisible(false);
-                    ent.setPersistent(ent.isCustomNameVisible());
-                    ent.setMaxHealth(700);
-                    ent.setHealth(700);
-                } else if (warden_difficulty.equals("NIGHTMARE")) { // 900HP (450 hearts) on nightmare difficulty
-                    ent.setCustomName("Nightmare Sentinel"); // Warden's name on hard difficulty is Nightmare Sentinel
-                    ent.setCustomNameVisible(false);
-                    ent.setPersistent(ent.isCustomNameVisible());
-                    ent.setMaxHealth(900);
-                    ent.setHealth(900);
-                } else if (warden_difficulty.equals("INSANE")) { // 1200HP (600 hearts) on insane difficulty
-                    ent.setCustomName("Abyssal Devourer"); // Warden's name on hard difficulty is Abyssal Devourer
-                    ent.setCustomNameVisible(false);
-                    ent.setPersistent(ent.isCustomNameVisible());
-                    ent.setMaxHealth(1024);
-                    ent.setHealth(1024);
-                } else { // if difficulty not set correctly, default difficulty (normal) will be used
-                    ent.setCustomName("Abyss Killer");
-                    ent.setCustomNameVisible(false);
-                    ent.setPersistent(ent.isCustomNameVisible());
-                    ent.setMaxHealth(500);
-                    ent.setHealth(500);
-                }
-            }
+    private List<ItemStack> poolById(int id) {
+        if (id < 1 || id > LOOT_POOLS.size()) return Collections.emptyList();
+        return LOOT_POOLS.get(id - 1);
+    }
+
+    private static final double HEALTH_CAP = 1024.0;
+
+    private void applyHealth(LivingEntity ent, double requestedMaxHealth, boolean healToFull) {
+        double finalMax = Math.min(requestedMaxHealth, HEALTH_CAP);
+
+        AttributeInstance attr = ent.getAttribute(Attribute.MAX_HEALTH);
+        if (attr != null) {
+            attr.setBaseValue(finalMax);
+        }
+        if (healToFull) {
+            ent.setHealth(finalMax);
+        } else {
+            ent.setHealth(Math.min(ent.getHealth(),  finalMax));
         }
     }
 
     @EventHandler
+    public void wardenSpawnEvent(CreatureSpawnEvent e) {
+        if (e.getEntityType() != EntityType.WARDEN) return;
+        Warden war = (Warden) e.getEntity();
+        WardenDifficulty diff = getActiveDifficulty();
+
+        switch (diff) {
+            case EASY:
+                applyHealth(war, 300, true);
+                break;
+            case NORMAL:
+                applyHealth(war, 500, true);
+                break;
+            case HARD:
+                applyHealth(war, 700, true);
+                break;
+            case NIGHTMARE:
+                applyHealth(war, 900, true);
+                break;
+            case INSANE:
+                applyHealth(war, 1024, true);
+                break;
+            case CUSTOM:
+                applyCustomStats(war);
+                break;
+        }
+        applyWardenName(war, diff);
+    }
+
+    private void applyWardenName(Warden w, WardenDifficulty diff) {
+        Component name = switch (diff) {
+            case EASY -> Component.text("Echo Lurker", NamedTextColor.DARK_AQUA);
+            case NORMAL -> Component.text("Abyss Watcher", NamedTextColor.DARK_BLUE);
+            case HARD -> Component.text("Void Reaper", NamedTextColor.DARK_PURPLE);
+            case NIGHTMARE -> Component.text("Nightmare Sentinel", NamedTextColor.RED);
+            case INSANE -> Component.text("Abyssal Devourer", NamedTextColor.DARK_RED);
+            case CUSTOM -> Component.text("Custom Warden", NamedTextColor.GOLD);
+        };
+        w.customName(name);
+        w.setCustomNameVisible(true);
+    }
+
+    @EventHandler
     public void wardenAttackEvent(EntityDamageByEntityEvent e) {
-        String warden_difficulty = this.getConfig().getString("warden_difficulty", "NORMAL");
-        if (e.getDamager() instanceof Warden) {
-            if (warden_difficulty.equals("EASY")) { // 0.5x damage on easy difficulty
-                double originalDamage = e.getDamage();
-                double newDamage = originalDamage * 0.5;
-                e.setDamage(newDamage);
-            } else if (warden_difficulty.equals("NORMAL")) { // 1.5x damage on normal difficulty
-                double originalDamage = e.getDamage();
-                double newDamage = originalDamage * 1.5;
-                e.setDamage(newDamage);
-            } else if (warden_difficulty.equals("HARD")) { // 2.5x damage on hard difficulty
-                double originalDamage = e.getDamage();
-                double newDamage = originalDamage * 2.5;
-                e.setDamage(newDamage);
-            } else if (warden_difficulty.equals("NIGHTMARE")) { // 3.5x damage on nightmare difficulty
-                double originalDamage = e.getDamage();
-                double newDamage = originalDamage * 3.5;
-                e.setDamage(newDamage);
-            } else if (warden_difficulty.equals("INSANE")) { // 4.5x damage on insane difficulty
-                double originalDamage = e.getDamage();
-                double newDamage = originalDamage * 4.5;
-                e.setDamage(newDamage);
-            } else { // if difficulty not set correctly, default difficulty (normal) will be used
-                double originalDamage = e.getDamage();
-                double newDamage = originalDamage * 1.5;
-                e.setDamage(newDamage);
-            }
+        if (!(e.getDamager() instanceof Warden)) return;
+        e.setDamage(e.getDamage() * getDamageMultiplier(getActiveDifficulty()));
+    }
+
+    private double getDamageMultiplier(WardenDifficulty diff) {
+        switch (diff) {
+            case EASY: return 0.5;
+            case NORMAL: return 1.5;
+            case HARD: return 2.5;
+            case NIGHTMARE: return 3.5;
+            case INSANE: return 4.5;
+            case CUSTOM:
+                return Math.max(0.1,
+                        Math.min(100.0, getConfig().getDouble("warden_damage", 1.0)));
+            default:
+                return 1.5;
         }
     }
 
@@ -204,9 +225,9 @@ public final class HarderWardens extends JavaPlugin implements Listener {
     }
 
     private static final Map<WardenDifficulty, Double> RARE_CHANCE = Map.of(
-            WardenDifficulty.EASY, 0.25,
-            WardenDifficulty.NORMAL, 0.35,
-            WardenDifficulty.HARD, 0.45,
+            EASY, 0.25,
+            NORMAL, 0.35,
+            HARD, 0.45,
             WardenDifficulty.NIGHTMARE, 0.55,
             WardenDifficulty.INSANE, 0.65,
             WardenDifficulty.CUSTOM, 0.50
@@ -214,16 +235,17 @@ public final class HarderWardens extends JavaPlugin implements Listener {
 
     private static final Map<String, WardenDifficulty> DIFF_ALIASES = new HashMap<>();
     static {
-        DIFF_ALIASES.put("easy", WardenDifficulty.EASY);
-        DIFF_ALIASES.put("normal", WardenDifficulty.NORMAL);
-        DIFF_ALIASES.put("hard", WardenDifficulty.HARD);
+        DIFF_ALIASES.put("easy", EASY);
+        DIFF_ALIASES.put("normal", NORMAL);
+        DIFF_ALIASES.put("hard", HARD);
         DIFF_ALIASES.put("nightmare", WardenDifficulty.NIGHTMARE);
         DIFF_ALIASES.put("insane", WardenDifficulty.INSANE);
+        DIFF_ALIASES.put("custom", WardenDifficulty.CUSTOM);
     }
 
     private WardenDifficulty getActiveDifficulty() {
         String raw = this.getConfig().getString("warden_difficulty", "NORMAL");
-        if (raw == null) return WardenDifficulty.NORMAL;
+        if (raw == null) return NORMAL;
 
         String key = raw.trim().toLowerCase(Locale.ROOT);
         WardenDifficulty mapped = DIFF_ALIASES.get(key);
@@ -234,29 +256,45 @@ public final class HarderWardens extends JavaPlugin implements Listener {
             return WardenDifficulty.valueOf(norm);
         } catch (IllegalArgumentException ex) {
             getLogger().warning("Invalid difficulty in config: " + raw + " (defaulting to NORMAL)");
-            return WardenDifficulty.NORMAL;
+            return NORMAL;
         }
     }
 
-    private List<ItemStack> getCommonPool(WardenDifficulty diff) {
-        switch (diff) {
-            case EASY : return WardenLootManager.easyCommon;
-            case NORMAL : return WardenLootManager.normalCommon;
-            case HARD : return WardenLootManager.hardCommon;
-            case NIGHTMARE : return WardenLootManager.nightmareCommon;
-            case INSANE : return WardenLootManager.insaneCommon;
-            default : return Collections.emptyList();
-        }
+    private static final double HEALTH_MIN = 1.0;
+    private static final double HEALTH_MAX = 1024.0;
+    private static final double DMG_MIN = 0.1;
+    private static final double DMG_MAX = 100.0;
+
+    private void applyCustomStats(LivingEntity ent) {
+        double cfgHP = Math.max(HEALTH_MIN, Math.min(HEALTH_MAX, getConfig().getDouble("warden_health", 100.0)));
+        double cfgDMG = Math.max(DMG_MIN, Math.min(DMG_MAX, getConfig().getDouble("warden_damage", 1.0)));
+
+        AttributeInstance hpAttr = ent.getAttribute(Attribute.MAX_HEALTH);
+        if (hpAttr != null) hpAttr.setBaseValue(cfgHP);
+        ent.setHealth(Math.min(cfgHP, HEALTH_MAX));
+
+        AttributeInstance dmgAttr = ent.getAttribute(Attribute.ATTACK_DAMAGE);
+        if (dmgAttr != null) dmgAttr.setBaseValue(cfgDMG);
     }
 
-    private List<ItemStack> getRarePool(WardenDifficulty diff) {
-        switch (diff) {
-            case EASY : return WardenLootManager.easyRare;
-            case NORMAL : return WardenLootManager.normalRare;
-            case HARD : return WardenLootManager.hardRare;
-            case NIGHTMARE : return WardenLootManager.nightmareRare;
-            case INSANE : return WardenLootManager.insaneRare;
-            default : return Collections.emptyList();
+    private List<ItemStack> getCommonPool(WardenDifficulty d) {
+        switch (d) {
+            case EASY: return WardenLootManager.easyCommon;
+            case NORMAL: return WardenLootManager.normalCommon;
+            case HARD: return WardenLootManager.hardCommon;
+            case NIGHTMARE: return WardenLootManager.nightmareCommon; // or veryHardCommon if you kept old name
+            case INSANE: return WardenLootManager.insaneCommon;
+            default: return Collections.emptyList();
+        }
+    }
+    private List<ItemStack> getRarePool(WardenDifficulty d) {
+        switch (d) {
+            case EASY: return WardenLootManager.easyRare;
+            case NORMAL: return WardenLootManager.normalRare;
+            case HARD: return WardenLootManager.hardRare;
+            case NIGHTMARE: return WardenLootManager.nightmareRare;
+            case INSANE: return WardenLootManager.insaneRare;
+            default: return Collections.emptyList();
         }
     }
 
@@ -269,23 +307,37 @@ public final class HarderWardens extends JavaPlugin implements Listener {
 
         WardenDifficulty diff = getActiveDifficulty();
 
-        List<ItemStack> common = getCommonPool(diff);
-        List<ItemStack> rare = getRarePool(diff);
+        List<ItemStack> chosenList;
 
-        if (common.isEmpty() && rare.isEmpty()) return;
+        if (diff == WardenDifficulty.CUSTOM) {
+            int opt1 = getConfig().getInt("warden_loot_option_1", 1);
+            int opt2 = getConfig().getInt("warden_loot_option_2", 2);
 
-        double rareChance = RARE_CHANCE.getOrDefault(diff, 0.35);
-        boolean pickRare = ThreadLocalRandom.current().nextDouble() < rareChance;
+            List<ItemStack> pool1 = poolById(opt1);
+            List<ItemStack> pool2 = poolById(opt2);
 
-        List<ItemStack> chosen = pickRare ? rare : common;
-
-        if (chosen.isEmpty()) {
-            chosen = pickRare ? common : rare;
-            if (chosen.isEmpty()) return;
+            boolean pickFirst = ThreadLocalRandom.current().nextBoolean();
+            chosenList = pickFirst ? pool1 : pool2;
+            if (chosenList.isEmpty()) chosenList = pickFirst ? pool2 : pool1;
+            if (chosenList.isEmpty()) {
+                e.setDroppedExp(xp);
+                return;
+            }
+        } else {
+            List<ItemStack> common = getCommonPool(diff);
+            List<ItemStack> rare = getRarePool(diff);
+            double rareChance = RARE_CHANCE.getOrDefault(diff, 0.35);
+            boolean pickRare = ThreadLocalRandom.current().nextDouble() < rareChance;
+            chosenList = pickRare ? rare : common;
+            if (chosenList.isEmpty()) chosenList = pickRare ? common : rare;
+            if (chosenList.isEmpty()) {
+                e.setDroppedExp(xp);
+                return;
+            }
         }
 
-        for (ItemStack template : chosen) {
-            if (template == null || template.getType() == Material.AIR) continue;
+        for (ItemStack template : chosenList) {
+            if (template == null || template.getType().isAir()) continue;
             e.getEntity().getWorld().dropItemNaturally(
                     e.getEntity().getLocation(),
                     template.clone()
@@ -293,5 +345,12 @@ public final class HarderWardens extends JavaPlugin implements Listener {
         }
 
         e.setDroppedExp(xp);
+    }
+
+    private void validateCustomLootOptions() {
+        int o1 = getConfig().getInt("warden_loot_option_1", 1);
+        int o2 = getConfig().getInt("warden_loot_option_2", 2);
+        if (o1 < 1 || o1 > 10) getLogger().warning("warden_loot_option_1 must be 1..10 (was " + o1 + ")");
+        if (o2 < 1 || o2 > 10) getLogger().warning("warden_loot_option_2 must be 1..10 (was " + o2 + ")");
     }
 }

@@ -51,5 +51,5 @@ warden_loot_option_2: 2   # Details for each loot tier below
 # Loot 9: 3x Netherite Scraps, 1x End Crystal, 2x Ghast Tears
 # Loot 10: 1x Netherite Ingot, 1x Totem of Undying, 1x Enchanted Netherite Weapon
 
-# Version 1.2 works for MC versions 1.21 - 1.21.10
+# Version 1.2 works for MC versions 1.21 - 1.21.11
 # End of config file
