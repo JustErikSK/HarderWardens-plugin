@@ -28,7 +28,6 @@ public final class HarderWardens extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GREEN + "Harder Wardens >> Plugin has been enabled!");
         this.getServer().getPluginManager().registerEvents(this, this);
         this.saveDefaultConfig();
         validateCustomLootOptions();
@@ -36,6 +35,7 @@ public final class HarderWardens extends JavaPlugin implements Listener {
         getLogger().info("Harder Wardens is loading loot tables...");
         WardenLootManager.init();
         getLogger().info("Loot tables initialized!");
+        Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_GREEN + "Harder Wardens >> Plugin has been enabled!");
 
         FileConfiguration config = this.getConfig();
         config.addDefault("warden_difficulty", "NORMAL");
