@@ -68,7 +68,7 @@ public final class HarderWardens extends JavaPlugin implements Listener {
         public static final List<ItemStack> insaneRare = new ArrayList<>();
 
         public static void init() {
-            // ==== EASY ====
+            // EASY loot
             easyCommon.add(new ItemStack(Material.IRON_INGOT, 3));
             easyCommon.add(new ItemStack(Material.AMETHYST_SHARD, 4));
             easyCommon.add(new ItemStack(Material.LAPIS_LAZULI, 5));
@@ -76,7 +76,7 @@ public final class HarderWardens extends JavaPlugin implements Listener {
             easyRare.add(new ItemStack(Material.DIAMOND, 1));
             easyRare.add(new ItemStack(Material.GOLDEN_APPLE, 1));
 
-            // ==== NORMAL ====
+            // NORMAL loot
             normalCommon.add(new ItemStack(Material.GOLD_INGOT, 4));
             normalCommon.add(new ItemStack(Material.REDSTONE, 6));
             normalCommon.add(new ItemStack(Material.EMERALD, 2));
@@ -84,7 +84,7 @@ public final class HarderWardens extends JavaPlugin implements Listener {
             normalRare.add(new ItemStack(Material.NETHERITE_SCRAP, 1));
             normalRare.add(new ItemStack(Material.ENDER_PEARL, 2));
 
-            // ==== HARD ====
+            // HARD loot
             hardCommon.add(new ItemStack(Material.QUARTZ, 5));
             hardCommon.add(new ItemStack(Material.BLAZE_ROD, 2));
             hardCommon.add(new ItemStack(Material.DIAMOND, 2));
@@ -92,7 +92,7 @@ public final class HarderWardens extends JavaPlugin implements Listener {
             hardRare.add(new ItemStack(Material.TOTEM_OF_UNDYING, 1));
             hardRare.add(new ItemStack(Material.DIAMOND, 5));
 
-            // ==== NIGHTMARE ====
+            // NIGHTMARE loot
             nightmareCommon.add(new ItemStack(Material.DIAMOND, 3));
             nightmareCommon.add(new ItemStack(Material.ENDER_PEARL, 3));
             nightmareCommon.add(new ItemStack(Material.BLAZE_POWDER, 2));
@@ -100,7 +100,7 @@ public final class HarderWardens extends JavaPlugin implements Listener {
             nightmareRare.add(new ItemStack(Material.NETHERITE_SCRAP, 2));
             nightmareRare.add(new ItemStack(Material.ENCHANTED_GOLDEN_APPLE, 1));
 
-            // ==== INSANE ====
+            // INSANE loot
             insaneCommon.add(new ItemStack(Material.NETHERITE_SCRAP, 3));
             insaneCommon.add(new ItemStack(Material.END_CRYSTAL, 1));
             insaneCommon.add(new ItemStack(Material.GHAST_TEAR, 2));
@@ -278,7 +278,7 @@ public final class HarderWardens extends JavaPlugin implements Listener {
             case EASY: return WardenLootManager.easyCommon;
             case NORMAL: return WardenLootManager.normalCommon;
             case HARD: return WardenLootManager.hardCommon;
-            case NIGHTMARE: return WardenLootManager.nightmareCommon; // or veryHardCommon if you kept old name
+            case NIGHTMARE: return WardenLootManager.nightmareCommon;
             case INSANE: return WardenLootManager.insaneCommon;
             default: return Collections.emptyList();
         }
